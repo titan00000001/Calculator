@@ -425,5 +425,102 @@ function M.rk4_solve(f, t0, x0, h, steps)
     x = M.rk4_step(f, t, x, h)
     t = t + h
   end
+
+  local function print_vector(v)
+  io.write("[ ")
+  for i=1,#v do
+    io.write(string.format("%g", v[i]))
+    if i < #v then io.write(", ") end
+  end
+  io.write(" ]\n")
+end
+
+local function print_matrix(A)
+  for i=1,#A do
+    print_vector(A[i])
+  end
+end
+
+-- -----------------------------
+-- Interactive menu
+-- -----------------------------
+local function main()
+  while true do
+    print("\n=== Advanced Calc & Linear Algebra Menu ===")
+    print("1. Vector addition")
+    print("2. Solve linear system (Gaussian elimination)")
+    print("3. Matrix determinant")
+    print("4. Matrix inverse")
+    print("5. Power iteration (dominant eigenvalue)")
+    print("0. Exit")
+    io.write("Choose option: ")
+    local choice = io.read("*l")
+
+    if choice == "1" then
+      local a = {1,2,3}
+      local b = {4,5,6}
+      local c = M.vec_add(a,b)
+      print("a + b = "); print_vector(c)
+
+    elseif choice == "2" then
+      local A = {
+        {2,1},
+        {5,7}
+      }
+      local b = {11,13}
+      local x,err = M.gauss_solve(A,b)
+      if x then
+        print("Solution x = "); print_vector(x)
+      else
+        print("Error: "..err)
+      end
+
+    elseif choice == "3" then
+      local A = {
+        {1,2,3},
+        {0,1,4},
+        {5,6,0}
+      }
+      local det,err = M.det(A)
+      if det then
+        print("det(A) = "..det)
+      else
+        print("Error: "..err)
+      end
+
+    elseif choice == "4" then
+      local A = {
+        {4,7},
+        {2,6}
+      }
+      local inv,err = M.inverse(A)
+      if inv then
+        print("A^-1 = ")
+        print_matrix(inv)
+      else
+        print("Error: "..err)
+      end
+
+    elseif choice == "5" then
+      local A = {
+        {2,1},
+        {1,3}
+      }
+      local lambda, v = M.power_iteration(A)
+      print("Dominant eigenvalue = "..lambda)
+      print("Eigenvector: ")
+      print_vector(v)
+
+    elseif choice == "0" then
+      print("Goodbye!")
+      break
+    else
+      print("Invalid choice, try again.")
+    end
+  end
+end
+
+-- run program
+main()
   return x
 end
